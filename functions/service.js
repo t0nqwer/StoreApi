@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import Service from "../models/service.js";
 import Product from "../models/product.js";
 import mongoose from "mongoose";
+import Bill from "../models/bill.js";
+import moment from "moment-timezone";
 dotenv.config();
 const getStoreList = async () => {
   try {
@@ -67,3 +69,82 @@ const updateProduct = async () => {
 };
 updateProduct();
 const getStores = () => {};
+const useCountOrder = (lastorder) => {
+  const alphabet = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+  ];
+  if (lastorder === "") {
+    return "A1";
+  }
+  const first = lastorder.split("")[0];
+  const second = lastorder.split("")[1];
+  if (second < 9) {
+    return `${first.toUpperCase()}${+second + 1}`;
+  }
+  if (second == 9) {
+    let nextchar = alphabet
+      .map((e, i) => {
+        if (first === e) return i + 1;
+      })
+      .filter((e) => typeof e == "number");
+    return `${alphabet[nextchar]}0`;
+  }
+  return;
+};
+export const createBill = async () => {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const findLastBill = await Bill.findOne({
+      date: { $gte: startOfToday },
+    }).sort({ date: -1 });
+
+    if (!findLastBill) {
+      const billname = useCountOrder("");
+      const newBill = new Bill({
+        name: billname,
+        date: now,
+      });
+      await newBill.save();
+      return newBill;
+    }
+    const billname = useCountOrder(findLastBill.name);
+    const newBill = new Bill({
+      name: billname,
+      date: now,
+    });
+    await newBill.save();
+    return newBill;
+  } catch (error) {
+    console.log(error.message);
+  }
+};

@@ -6,6 +6,8 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { connectToDatabase } from "./functions/database.js";
 import appRoutes from "./routes/appRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import ReportRoutes from "./routes/reportRoutes.js";
 import "./functions/service.js";
 const app = express();
 app.use(express.json());
@@ -21,6 +23,9 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 app.use("/app", appRoutes);
+app.use("/product", productRoutes);
+app.use("/report", ReportRoutes);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

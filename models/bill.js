@@ -3,20 +3,36 @@ const { Schema, model, models } = pkg;
 import Product from "./product.js";
 
 const productSchema = new Schema({
-  product: { type: Schema.Types.ObjectId, ref: Product, required: true },
-  quantity: { type: Number, required: true },
+  product: { type: Schema.Types.String, ref: Product, required: true },
+  barcode: { type: String, required: true },
+  qty: { type: Number, required: true },
+});
+const customProductSchema = new Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  qty: { type: Number, required: true, default: 1 },
 });
 const billSchema = new Schema({
   name: { type: String, required: true },
   date: { type: Date },
   products: [productSchema],
+  customProducts: [customProductSchema],
   payment: {
     type: String,
     enum: ["cash", "credit", "transfer"],
-    default: "credit",
   },
   total: { type: Number, default: 0 },
   cash: { type: String },
+  active: {
+    type: String,
+    enum: ["active", "purchase", "delete"],
+    default: "active",
+  },
+  distype: {
+    type: String,
+    enum: ["percent", "int"],
+  },
+  amount: { type: Number },
 });
 
 const Bill = models.Bill || model("Bill", billSchema);
