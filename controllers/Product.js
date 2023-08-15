@@ -1,6 +1,7 @@
 import Product from "../models/product.js";
 import { createBill } from "../functions/service.js";
 import Bill from "../models/bill.js";
+import Pos from "../models/posstore.js";
 
 export const ListProduct = async (req, res) => {
   const { search } = req.query;
@@ -304,7 +305,7 @@ export const SetDiscount = async (req, res) => {
 };
 
 export const SetBill = async (req, res) => {
-  const { billID, payment, cash } = req.body;
+  const { billID, payment, cash, total, disamout, change } = req.body;
   try {
     console.log(billID, payment, cash);
     const SetBill = await Bill.findOneAndUpdate(
@@ -315,8 +316,12 @@ export const SetBill = async (req, res) => {
         payment,
         active: "purchase",
         cash: cash,
+        total,
+        disamout,
+        change,
       }
     );
+
     if (SetBill) {
       console.log(SetBill);
       const now = new Date();
@@ -341,7 +346,24 @@ export const SetBill = async (req, res) => {
 export const AddCustomProduct = async (req, res) => {
   const { billID, name, price, qty } = req.body;
   try {
-    console.log(billID, name, price);
+    if (billID === "" || !billID) {
+      const bill = await createBill();
+      const CustomProduct = {
+        name: name,
+        price: price,
+      };
+      const NewBill = await Bill.updateOne(
+        {
+          _id: bill._id,
+        },
+
+        { $push: { customProducts: CustomProduct } }
+      );
+      if (NewBill) {
+        const active = await Bill.findOne({ _id: bill._id });
+        return res.json(active);
+      }
+    }
     const CustomProduct = {
       name: name,
       price: price,
@@ -349,6 +371,23 @@ export const AddCustomProduct = async (req, res) => {
     const updatebill = await Bill.updateOne(
       { _id: billID },
       { $push: { customProducts: CustomProduct } }
+    );
+    if (updatebill) {
+      const active = await Bill.findOne({ _id: billID });
+      res.json(active);
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.json(error.message);
+  }
+};
+export const RemoveCustomProduct = async (req, res) => {
+  const { billID, DocID } = req.body;
+  console.log(billID, DocID);
+  try {
+    const updatebill = await Bill.updateOne(
+      { _id: billID },
+      { $pull: { customProducts: { _id: DocID } } }
     );
     if (updatebill) {
       const active = await Bill.findOne({ _id: billID });

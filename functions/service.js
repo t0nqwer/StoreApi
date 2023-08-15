@@ -24,6 +24,7 @@ const getStoreList = async () => {
     console.log(error.message);
   }
 };
+getStoreList();
 const updateProduct = async () => {
   try {
     const { data } = await axios.get(`${process.env.SERVER_URL}/barcode`);

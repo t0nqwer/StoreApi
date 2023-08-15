@@ -22,12 +22,14 @@ const billSchema = new Schema({
     enum: ["cash", "credit", "transfer"],
   },
   total: { type: Number, default: 0 },
-  cash: { type: String },
+  cash: { type: Number, default: 0 },
+  change: { type: Number, default: 0 },
   active: {
     type: String,
     enum: ["active", "purchase", "delete"],
     default: "active",
   },
+  disamout: { type: Number },
   distype: {
     type: String,
     enum: ["percent", "int"],

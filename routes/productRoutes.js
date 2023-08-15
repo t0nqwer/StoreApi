@@ -12,6 +12,7 @@ import {
   SetDiscount,
   SetBill,
   AddCustomProduct,
+  RemoveCustomProduct,
 } from "../controllers/Product.js";
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.get("/GetCurrentProductList/:id", GetCurrentProductList);
 router.post("/SetDiscount", SetDiscount);
 router.post("/SetBill", SetBill);
 router.post("/AddCustomProduct", AddCustomProduct);
+router.post("/RemoveCustomProduct", RemoveCustomProduct);
 
 router.put("/UpdateProduct");
 router.post("/DeleteProduct", DeleteProduct);
