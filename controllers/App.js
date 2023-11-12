@@ -7,17 +7,20 @@ import moment from "moment-timezone";
 export const StartApp = async (req, res) => {
   try {
     const app = await AppSettings.findOne();
-    console.log(app);
+
     res.status(200).json(app);
   } catch (error) {
-    console.log("error");
     res.status(500).json("application not found");
   }
 };
 export const StoreList = async (req, res) => {
   try {
     const app = await Service.findOne().select("StoreList");
-    res.status(200).json(app.StoreList);
+    const notExpire = app.StoreList.filter(
+      (store) => store.closeDate > Date.now() || store.closeDate === null
+    );
+    console.log(notExpire, app.StoreList);
+    res.status(200).json(notExpire);
   } catch (error) {
     console.log("error");
     res.status(500).json("application not found");

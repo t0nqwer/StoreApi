@@ -303,7 +303,6 @@ export const SetDiscount = async (req, res) => {
     res.json(error.message);
   }
 };
-
 export const SetBill = async (req, res) => {
   const { billID, payment, cash, total, disamout, change } = req.body;
   try {

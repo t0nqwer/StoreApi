@@ -8,9 +8,7 @@ import moment from "moment-timezone";
 dotenv.config();
 const getStoreList = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.SERVER_URL}/store/storelist`
-    );
+    const { data } = await axios.get(`${process.env.SERVER_URL}/store`);
     const getDoc = await Service.findOne();
     await Service.updateOne(
       {
@@ -55,7 +53,8 @@ const updateProduct = async () => {
           sort: product.sort,
           price: product.price,
           brand: product.brand,
-        }
+        },
+        { upsert: true }
       );
     });
     const difference = currentProduct
@@ -69,7 +68,7 @@ const updateProduct = async () => {
   }
 };
 updateProduct();
-const getStores = () => {};
+
 const useCountOrder = (lastorder) => {
   const alphabet = [
     "A",
